@@ -20,11 +20,13 @@ window.requestAnimationFrame(main)
 
 function update ()  {
     updateSnake()
+    playArea.innerHTML = ''
 
 }
 
 
 function draw()  {
     drawSnake(playArea)
+    
 
 }
