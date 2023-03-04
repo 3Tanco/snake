@@ -1,32 +1,45 @@
-import { update as updateSnake, draw as drawSnake, SNAKE_SPEED, } from './snake.js'
-
-const playArea = document.getElementById('play-area')
+import { update as updateSnake, draw as drawSnake, SNAKE_SPEED, getSnakeHead, snakeIntersection } from './snake.js'
+import { update as updateGrow, draw as drawGrow } from './grow.js'
+import { outsideGrid } from './grid.js'
 
 let lastRenderTime = 0
-function main (currentTime) {
-    window.requestAnimationFrame(main)
-    const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
-    if (secondsSinceLastRender < 1 / SNAKE_SPEED) return
-  
-  
-    lastRenderTime = currentTime
-  
-    update()
-    draw()
+let gameOver = false
+const playArea = document.getElementById('play-area')
+
+function main(currentTime) {
+  if (gameOver) {
+    if (confirm('You lost. Press ok to restart.')) {
+      window.location = '/'
+    }
+    return
+  }
+
+
+  window.requestAnimationFrame(main)
+  const secondsSinceLastRender = (currentTime - lastRenderTime) / 1000
+  if (secondsSinceLastRender < 1 / SNAKE_SPEED) return
+
+
+  lastRenderTime = currentTime
+
+  update()
+  draw()
 }
 
 window.requestAnimationFrame(main)
 
-
-function update ()  {
-    updateSnake()
-    playArea.innerHTML = ''
-
+function update() {
+  updateSnake()
+  updateGrow()
+  checkDeath()
 }
 
+function draw() {
+  playArea.innerHTML = ''
+  drawSnake(playArea)
+  drawGrow(playArea)
+}
 
-function draw()  {
-    drawSnake(playArea)
-    
-
+function checkDeath() {
+  gameOver = outsideGrid(getSnakeHead()) || snakeIntersection()
 }
